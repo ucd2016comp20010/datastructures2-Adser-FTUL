@@ -9,7 +9,7 @@ public class Wk1 {
 
         System.out.println(my_array);
 
-        //double average = ...;
+        //double average = ...;/home/adam
     }
     public static void main(String [] args) {
         q1();
