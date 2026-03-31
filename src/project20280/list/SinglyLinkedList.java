@@ -4,7 +4,7 @@ import project20280.interfaces.List;
 
 import java.util.Iterator;
 
-public class SinglyLinkedList<E> implements List<E> {
+public class SinglyLinkedList<E extends Comparable<E>> implements List<E> {
 
     private static class Node<E> {
 
@@ -60,7 +60,7 @@ public class SinglyLinkedList<E> implements List<E> {
 
     @Override
     public E get(int position) {
-        if(position > size() || position < 1) {
+        if(position > size() || position < 0) {
             throw new IndexOutOfBoundsException();
         }
 
@@ -241,30 +241,97 @@ public class SinglyLinkedList<E> implements List<E> {
         return sb.toString();
     }
 
+    public SinglyLinkedList<E> sortedMerge(SinglyLinkedList<E> ll2) {
+        SinglyLinkedList<E> merged = new SinglyLinkedList<>();
+
+        Node<E> node1 = this.head;
+        Node<E> node2 = ll2.head;
+
+        while (node1 != null && node2 != null) {
+            if (node1.getElement().compareTo(node2.getElement()) <= 0){
+                merged.addLast(node1.getElement());
+                node1 = node1.getNext();
+            } else {
+                merged.addLast(node2.getElement());
+                node2 = node2.getNext();
+            }
+        }
+
+        while (node1 != null) {
+            merged.addLast(node1.getElement());
+            node1 = node1.getNext();
+        }
+
+        while (node2 != null) {
+            merged.addLast(node2.getElement());
+            node2 = node2.getNext();
+        }
+
+        return merged;
+    }
+
+    public void reverse() {
+        Node<E> prev = null;
+        Node<E> curr = head;
+        Node<E> next;
+        while(curr != null) {
+            next = curr.getNext();
+            curr.setNext(prev);
+            prev = curr;
+            curr = next;
+        }
+        head = prev;
+    }
+
+    public SinglyLinkedList<E> copy() {
+        SinglyLinkedList<E> twin = new SinglyLinkedList<E>();
+        Node<E> tmp = head;
+        while (tmp != null) {
+            twin.addLast(tmp.getElement());
+            tmp = tmp.next;
+        }
+        return twin;
+    }
+
+    public void recursiveReverse(SinglyLinkedList<E> list) {
+        int i = 0;
+        recursiveReverseHelper(list, i);
+    }
+
+    public void recursiveReverseHelper(SinglyLinkedList<E> list, int i) {
+        if (i < list.size) {
+            recursiveReverseHelper(list,i + 1);
+            System.out.println(list.get(i));
+        }
+    }
+
+    public SinglyLinkedList<E> recursiveCopy() {
+        SinglyLinkedList<E> l2 = new SinglyLinkedList<>();
+
+        recursiveCopyHelper(this.head , l2);
+        return l2;
+    }
+
+    private void recursiveCopyHelper(Node<E> current, SinglyLinkedList<E> l2) {
+        if (current != null) {
+            l2.addLast(current.element);
+            recursiveCopyHelper(current.next, l2);
+        }
+    }
+
     public static void main(String[] args) {
-        SinglyLinkedList<Integer> ll = new SinglyLinkedList<Integer>();
-        System.out.println("ll " + ll + " isEmpty: " + ll.isEmpty());
-        //LinkedList<Integer> ll = new LinkedList<Integer>();
+        SinglyLinkedList<Integer> l1 = new SinglyLinkedList<>();
 
-        ll.addFirst(1);
-        ll.add(1, 2);
-        ll.addLast(3);
+        l1.addLast(2);
+        l1.addLast(6);
+        l1.addLast(20);
+        l1.addLast(24);
 
-        System.out.println(ll);
-        System.out.println(ll.size);
+        SinglyLinkedList<Integer> l2 = l1.recursiveCopy();
 
+        System.out.println(l1);
+        System.out.println(l2);
 
-        ll.remove(2);
-
-        System.out.println(ll);
-        System.out.println(ll.size);
-
-        ll.addLast(3);
-        System.out.println(ll);
-        System.out.println(ll.size);
-
-        ll.removeLast();
-        System.out.println(ll);
-        System.out.println(ll.size);
+        l1.recursiveReverse(l1);
     }
 }

@@ -7,7 +7,7 @@ import java.util.Iterator;
 public class CircularlyLinkedList<E> implements List<E> {
 
     private class Node<T> {
-        private final T data;
+        private  T data;
         private Node<T> next;
 
         public Node(T e, Node<T> n) {
@@ -28,8 +28,8 @@ public class CircularlyLinkedList<E> implements List<E> {
         }
     }
 
-    private final Node<E> tail = null;
-    private final int size = 0;
+    private Node<E> tail = null;
+    private int size = 0;
 
     public CircularlyLinkedList() {
 
@@ -42,8 +42,13 @@ public class CircularlyLinkedList<E> implements List<E> {
 
     @Override
     public E get(int i) {
-        // TODO
-        return null;
+        Node<E> node = tail.next;
+
+        for (int j = 0; j < i; j++) {
+            node = node.next;
+        }
+
+        return node.data;
     }
 
     /**
@@ -55,17 +60,62 @@ public class CircularlyLinkedList<E> implements List<E> {
      */
     @Override
     public void add(int i, E e) {
-        // TODO
+
+        if (i == 0) {
+            addFirst(e);
+        }
+        else if (i == size()) {
+            addLast(e);
+        }
+        else {
+            Node<E> node = tail.next;
+
+            for (int j = 0; j < i - 1; j++) {
+                node = node.next;
+            }
+
+            Node<E> newNode = new Node<>(e, node.next);
+            node.next = newNode;
+        }
     }
 
     @Override
     public E remove(int i) {
-        // TODO
-        return null;
+        if(isEmpty()) {
+            return null;
+        }
+
+        E data;
+        if (i == 0) {
+            data = tail.next.data;
+            removeFirst();
+        }
+        else if (i == size() - 1)
+        {
+            data = tail.data;
+            removeLast();
+        }
+        else {
+            Node<E> node = tail.next;
+
+            for (int j = 0; j < i - 1; j++) {
+                node = node.next;
+            }
+            Node<E> nextNode = node.next;
+            data = nextNode.data;
+
+            node.next = nextNode.next;
+            nextNode = null;
+            size--;
+        }
+
+        return data;
     }
 
     public void rotate() {
-        // TODO
+        if (tail != null) {
+            tail = tail.next;
+        }
     }
 
     private class CircularlyLinkedListIterator<E> implements Iterator<E> {
@@ -97,24 +147,74 @@ public class CircularlyLinkedList<E> implements List<E> {
 
     @Override
     public E removeFirst() {
-        // TODO
-        return null;
+        if(isEmpty()) return null;
+
+        E data = tail.next.data;
+
+        if (tail.next == tail) {
+            tail = null;
+        }
+        else {
+            Node<E> node = tail.next;
+            tail.next = node.next;
+        }
+
+        size--;
+        return data;
     }
 
     @Override
     public E removeLast() {
-        // TODO
-        return null;
+        if (isEmpty()) return null;
+        E data = tail.data;
+
+        if (tail.next == tail) {
+            tail = null;
+        }
+        else
+        {
+            Node<E> node = tail.next;
+
+            while (node.next != tail) {
+                node = node.next;
+            }
+
+            node.next = tail.next;
+            tail = node;
+        }
+
+        size--;
+        return data;
     }
 
     @Override
     public void addFirst(E e) {
-        // TODO
+        Node<E> newNode = new Node<>(e, null);
+        if(isEmpty()) {
+            tail = newNode;
+            tail.next = tail;
+        }
+        else {
+            newNode.next = tail;
+            tail.next = newNode;
+        }
+        size++;
     }
 
     @Override
     public void addLast(E e) {
-        // TODO
+        Node<E> newNode = new Node<>(e, null);
+
+        if(isEmpty()) {
+            tail = newNode;
+            tail.next = tail;
+        }
+        else {
+            newNode.next = tail.next;
+            tail.next = newNode;
+            tail = newNode;
+        }
+        size++;
     }
 
 
